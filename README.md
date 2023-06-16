@@ -1,0 +1,2 @@
+# HospitalAPI
+Basic Hospital API
