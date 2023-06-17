@@ -33,7 +33,7 @@ module.exports.create_report = async function(req, res) {
     const date = req.body.date;
 
     try {
-        let patient = await Patient.findById(id).exec();
+        let patient = await Patient.findById(patientId).exec();
         if (patient) {
             try {
                 const newReport = await Report.create({
@@ -41,8 +41,11 @@ module.exports.create_report = async function(req, res) {
                     status,
                     date,
                     patientId,
+                    patientName: patient.name,
                 });
+                res.status(200).json({message: "Report Created"});
             } catch(err) {
+                console.log(err);
                 res.status(422).json({message: "Unable to create report"});
             }
         } else {
@@ -53,6 +56,39 @@ module.exports.create_report = async function(req, res) {
     }
 }
 
-module.exports.all_reports = function(req, res) {
+module.exports.all_reports = async function(req, res) {
 
+    const mappedReport = (reports) => {
+        let newReport = [];
+        for (let report of reports) {
+            newReport.push({
+                patientId: report.patientId,
+                patientName: report.patientName,
+                doctor: report.doctor,
+                status: report.status,
+                date: report.date,
+            })
+        }
+        return newReport;
+    }
+
+    let patientId = req.params.id;
+
+    try {
+        const patient = await Patient.findById(patientId).exec();
+        if (patient) {
+            try {
+                let reports = await Report.find({patientId: patientId}).exec();
+                let filteredReports = mappedReport(reports);
+                res.status(200).json(filteredReports);
+            } catch (err) {
+                console.log(err);
+                res.status(500).json("Server Error");
+            }
+        } else {
+            res.status(422).json({message: "Register patient first"});
+        }
+    } catch(err) {
+        res.status(500).json("Server Error");
+    }
 }

@@ -12,13 +12,17 @@ const Report = mongoose.model("report", new mongoose.Schema({
         required: true,
     },
     date: {
-        type: Date,
-        required: true,
-    },
-    patient: {
         type: String,
         required: true,
-    }
+    },
+    patientId: {
+        type: String,
+        required: true,
+    },
+    patientName: {
+        type: String,
+        requried: true,
+    },
 }, { timestamps: true }));
 
 

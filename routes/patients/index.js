@@ -24,7 +24,6 @@ route.post(
 
 route.get(
     "/:id/all_reports",
-    passport.authenticate("jwt", { session: false }),
     patients.all_reports
 );
 
